@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #stage {
+            width: 100%;
+            height: 900px;
+            background: yellow;
+            margin: auto;
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+    <script src="./Ball.js"></script>
+    <script src="./Pointer.js"></script>
+    <script>
+        let info;
+        let stage;
+        let ballArray = [];
+        let radian=1.0;  // 각도가 1라디안
+        let pointer;
+        let r=0;
+
+        function createBall(){
+            let ball = new Ball(stage, 5, 5, pointer.x, pointer.y, 1, 1);
+            ballArray.push(ball);
+        }
+
+        function createPointer(){
+            //container, width, height, x, y, velR
+            pointer = new Pointer(stage, 5,100, 800, 500,1);
+        }
+
+        function loop(){
+            for(let i=0;i<ballArray.length;i++){
+                ballArray[i].tick();
+                ballArray[i].render();
+            }
+
+            pointer.render();
+        }
+
+        function rotate(n){
+            r+=n;
+
+            //let deg = Math.abs(r);
+            //console.log(deg);
+
+            pointer.r=((r*180)/Math.PI);
+            info.innerText=((r*180)/Math.PI);
+
+        }
+
+        function init() {
+            stage = document.getElementById("stage");            
+            info = document.getElementById("info");            
+            
+        }
+
+        addEventListener("load", function () {
+            init();
+            createPointer();
+
+            setInterval("loop()", 10);
+                        
+            stage.addEventListener("mousemove", function(e){
+
+                let deg = Math.atan2( e.offsetY-pointer.y, -(e.offsetX - pointer.x));
+                console.log(deg);
+                deg = Math.abs(deg);
+                pointer.r=((deg*180)/Math.PI);
+                info.innerText=((deg*180)/Math.PI);
+            });
+            
+
+            /*
+            stage.addEventListener("mousemove", function(event) {
+
+                // 마우스의 x, y 좌표를 가져옵니다.
+                var x = event.clientX;
+                var y = event.clientY;
+
+                // 마우스의 각도를 계산합니다.
+                var angle = Math.atan2(y-pointer.y, x - pointer.x);
+                
+                a= (angle*180)/Math.PI;
+                console.log(a);
+
+                // 눈금자를 각도로 회전시킵니다.
+                pointer.div.style.transform = "rotate(" + angle + "deg)";
+            });
+            */
+
+
+            document.body.addEventListener("keydown", function(e){
+                switch(e.keyCode){
+                    case 32:createBall();break;
+                    case 37:rotate(-0.01); break;   
+                    case 39:rotate(0.01); break;   
+                }
+
+
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div id="info"></div>
+    <div id="stage"></div>
+</body>
+
+</html>
